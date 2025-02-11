@@ -11,7 +11,7 @@ export default function Rezepte() {
     collection(getFirestore(app), "Rezepte"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   return (
@@ -29,7 +29,7 @@ export default function Rezepte() {
             <h5>Zutaten:</h5>
             {data.zutaten.map((zutat, index) => (
               <p key={index}>
-                {zutat.name} - {zutat.menge} {zutat.einheit}
+                {zutat.name} - {zutat.menge} {zutat.defaultEinheit}
               </p>
             ))}
             <hr />

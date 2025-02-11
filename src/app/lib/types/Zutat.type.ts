@@ -1,8 +1,9 @@
+import { ID } from "./ID.type";
+
 export type Zutat = {
-  id: string;
+  id: ID;
   name: string;
-  menge: number;
-  einheit: string;
-  vegetarisch: boolean;
-  vegan: boolean;
+  menge?: number;
+  defaultEinheit?: ID;
+  tags: ID[];
 };

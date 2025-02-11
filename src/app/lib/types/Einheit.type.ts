@@ -1,5 +1,7 @@
+import { ID } from "./ID.type";
+
 export type Einheit = {
-  id: string;
+  id: ID;
   labelShort: string;
   labelLong: string;
 };

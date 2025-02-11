@@ -1,7 +1,8 @@
+import { ID } from "./ID.type";
 import { Zutat } from "./Zutat.type";
 
 export type Rezept = {
-  id: string;
+  id: ID;
   name: string;
   zutaten: Zutat[];
   anleitung: string[];

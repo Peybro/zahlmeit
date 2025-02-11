@@ -1,7 +1,27 @@
 @use "@picocss/pico/scss/pico" as * with (
-  // amber, azure, blue, cyan, fuchsia, green, grey, indigo, jade, lime, orange, pink, pumpkin, purple, red, sand, slate, violet, yellow, zinc
+  // Red (#c52f21)
+  // Pink (#d92662)
+  // Fuchsia (#c1208b)
+  // Purple (#9236a4)
+  // Violet (#7540bf)
+  // Indigo (#524ed2)
+  // Blue (#2060df)
+  // Azure (#0172ad)
+  // Cyan (#047878)
+  // Jade (#007a50)
+  // Green (#398712)
+  // Lime (#a5d601)
+  // Yellow (#f2df0d)
+  // Amber (#ffbf00)
+  // Pumpkin (#ff9500)
+  // Orange (#d24317)
+  // Sand (#ccc6b4)
+  // Grey (#ababab)
+  // Zinc (#646b79)
+  // Slate (#525f7a)
   // best: amber, jade
-  $theme-color: "jade",
+  // für Farbtausch: HEX code für theme.extend.colors.primary in tailwind.config.ts ändern
+  $theme-color: "amber",
   $enable-semantic-container: false,
   $enable-classes: true
 );
