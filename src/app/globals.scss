@@ -1,0 +1,14 @@
+@use "@picocss/pico/scss/pico" as * with (
+  // amber, azure, blue, cyan, fuchsia, green, grey, indigo, jade, lime, orange, pink, pumpkin, purple, red, sand, slate, violet, yellow, zinc
+  // best: amber, jade
+  $theme-color: "jade",
+  $enable-semantic-container: false,
+  $enable-classes: true
+);
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// import pico css a second time to override some of tailwind's base styles
+@import "./../../node_modules/@picocss/pico/scss/pico.scss";
