@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
+  const pathname = usePathname();
+
   return (
     <nav>
       <ul>
@@ -11,24 +16,22 @@ export default function Navigation() {
         </li>
       </ul>
       <ul>
-        <li>
-          <Link href="/rezepte">Rezepte</Link>
-        </li>
-        <li>
-          <Link href="/zutaten" className="nav-link">
-            Zutaten
-          </Link>
-        </li>
-        <li>
-          <Link href="/einheiten" className="nav-link">
-            Einheiten
-          </Link>
-        </li>
-        <li>
-          <Link href="/tags" className="nav-link">
-            Tags
-          </Link>
-        </li>
+        {["Rezepte", "Zutaten", "Einheiten", "Tags"].map((route) => {
+          return (
+            <li key={route}>
+              <Link
+                href={`/${route.toLocaleLowerCase()}`}
+                className={
+                  pathname.startsWith(`/${route.toLocaleLowerCase()}`)
+                    ? "text-emerald-600"
+                    : ""
+                }
+              >
+                {route}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
