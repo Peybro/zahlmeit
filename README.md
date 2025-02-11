@@ -1,4 +1,4 @@
-# Mahlzeit
+# Zahlmeit
 
 wohl bekommts! 🍴
 
@@ -26,6 +26,7 @@ wohl bekommts! 🍴
 
 - `code .`
 - Die Kommandozeile kannst du jetzt wieder schließen
+  **oder** rechtsklick im Ordner oder auf den Ordner und "VSCode hier öffnen"
 
 Schau dich einfach mal ein bisschen um in VSC. Mit `Strg + Shift + P` öffnest du die Befehlspalette worüber du eigentlich alles steuern kannst was du in VSC machen kannst. Z.B. "Dokument formatieren mit" (hierfür kannst du auch mal suchen ob die die Tastenkombination rausfindest weil man das auf jeden Fall öfter brauchen wird, vllt findest du dabei noch andere gute).
 
@@ -35,6 +36,8 @@ In der ganz linken Icon-Spalte findest du unter anderem den Extension Tab. Ein p
 - Git Graph
 - Github Copilot
 - Prettier
+
+In der Spalte findest du auch 3 Punkte mit einer Weiche. Das ist die git Implementierung von VSC. Immer wenn du eine Datei änderst und speicherst, wird hier der kleine Counter erhöht und es werden die geänderten Dateien angezeigt. Du kannst von diesen geänderten Dateien einzelne mit dem + auswählen oder keine auswählen, dann wählst du alle aus - logo! Noch kurz eine Commit-Nachricht verfassen und schon kannst du deine Änderungen committen (und hochladen). Das ist nicht nur für Teamarbeiten wichtig, sondern du kannst auch jeden Commit einsehen und dein Projekt sogar auf jeden zurücksetzen. Mit Branches kann man auch parallel zu anderen Änderungen arbeiten aber das ist jetzt erstmal nicht so wichtig.
 
 ### Firebase Datenbank erstellen
 
@@ -53,6 +56,7 @@ Jetzt baut er das Projekt zusammen und spuckt dir dann eine lokale Adresse aus �
 
 ### Wat nu?
 
+- gobals.scss anschauen
 - Types anschauen
 - App.tsx starten
 - Strg + Click auf Component öffnet sie

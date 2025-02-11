@@ -27,14 +27,14 @@ export default function NeueZutat() {
     collection(getFirestore(app), "Einheiten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   const [tagValue, tagLoading, tagError] = useCollection(
     collection(getFirestore(app), "Tags"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   async function saveZutat(e: FormEvent<HTMLFormElement>) {

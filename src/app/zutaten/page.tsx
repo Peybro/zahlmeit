@@ -26,29 +26,29 @@ export default function Zutaten() {
     collection(getFirestore(app), "Zutaten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   const [einheiten, einheitenLoading, einheitenError] = useCollection(
-    collection(getFirestore(app), "Einheiten")
+    collection(getFirestore(app), "Einheiten"),
   );
 
   const [tags, tagsLoading, tagsError] = useCollection(
-    collection(getFirestore(app), "Tags")
+    collection(getFirestore(app), "Tags"),
   );
 
   async function deleteZutat(id: ID) {
     try {
       const q = query(
         collection(getFirestore(app), "Zutaten"),
-        where("id", "==", id)
+        where("id", "==", id),
       );
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
           await deleteDoc(doc(getFirestore(app), "Zutaten", document.id)).then(
-            () => console.info(`Zutat mit ID ${document.id} gelöscht`)
+            () => console.info(`Zutat mit ID ${document.id} gelöscht`),
           );
         });
       } else {
@@ -95,7 +95,7 @@ export default function Zutaten() {
                   return (
                     <div
                       key={tag}
-                      className="bg-emerald-600 text-white rounded-full px-3 py-1"
+                      className="bg-primary text-black rounded-full px-3 py-1"
                     >
                       {getTagNameById(tag)}
                     </div>

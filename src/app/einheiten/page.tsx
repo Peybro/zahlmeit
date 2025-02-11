@@ -22,21 +22,21 @@ export default function Einheiten() {
     collection(getFirestore(app), "Einheiten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   async function deleteEinheit(id: string) {
     try {
       const q = query(
         collection(getFirestore(app), "Einheiten"),
-        where("id", "==", id)
+        where("id", "==", id),
       );
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
           await deleteDoc(
-            doc(getFirestore(app), "Einheiten", document.id)
+            doc(getFirestore(app), "Einheiten", document.id),
           ).then(() => console.info(`Einheit mit ID ${document.id} gelöscht`));
         });
       } else {

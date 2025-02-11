@@ -23,7 +23,7 @@ export default function Navigation() {
                 href={`/${route.toLocaleLowerCase()}`}
                 className={
                   pathname.startsWith(`/${route.toLocaleLowerCase()}`)
-                    ? "text-emerald-600"
+                    ? "text-primary"
                     : ""
                 }
               >

@@ -21,21 +21,21 @@ export default function Einheiten() {
     collection(getFirestore(app), "Tags"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   async function deleteTag(id: string) {
     try {
       const q = query(
         collection(getFirestore(app), "Tags"),
-        where("id", "==", id)
+        where("id", "==", id),
       );
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
           await deleteDoc(doc(getFirestore(app), "Tags", document.id)).then(
-            () => console.info(`Tag mit ID ${document.id} gelöscht`)
+            () => console.info(`Tag mit ID ${document.id} gelöscht`),
           );
         });
       } else {
