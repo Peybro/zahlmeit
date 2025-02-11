@@ -1,5 +1,7 @@
+import { ID } from "./ID.type";
+
 export type Tag = {
-  id: string;
+  id: ID;
   name: string;
   description: string;
 };

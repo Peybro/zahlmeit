@@ -15,14 +15,14 @@ export default function SpecificRezept() {
     doc(getFirestore(app), "Rezepte", id as string),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   async function deleteRezept() {
     // mit Await/Async kann auf Aktionen gewartet werden von denen man nicht genau sagen kann wann sie ausgeführt werden (#Promises)
     // .then() passiert dann erst wenn das vorherige Event abgeschlossen ist
     await deleteDoc(doc(getFirestore(app), "Rezepte", id as string)).then(() =>
-      replace("/")
+      replace("/"),
     );
   }
 
@@ -44,7 +44,7 @@ export default function SpecificRezept() {
             <div key={zutat.id} className="flex">
               <input type="checkbox" />
               <p key={index}>
-                {zutat.name} - {zutat.menge} {zutat.einheit}
+                {zutat.name} - {zutat.menge} {zutat.defaultEinheit}
               </p>
             </div>
           ))}

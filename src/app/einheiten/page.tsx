@@ -15,6 +15,7 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
 import { Einheit } from "@/app/lib/types/Einheit.type";
 import NeueEinheit from "../lib/components/NeueEinheit.component";
+import DeleteButton from "../lib/components/DeleteButton.component";
 
 export default function Einheiten() {
   const [value, loading, error] = useCollection(
@@ -62,7 +63,7 @@ export default function Einheiten() {
             <summary>
               {data.labelLong} ({data.labelShort})
             </summary>
-            <button onClick={() => deleteEinheit(data.id)}>Löschen</button>
+            <DeleteButton onDelete={() => deleteEinheit(data.id)} />
           </details>
         );
       })}

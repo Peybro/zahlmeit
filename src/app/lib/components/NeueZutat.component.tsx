@@ -1,14 +1,41 @@
 "use client";
 
 import { app } from "@/firebase";
-import { setDoc, getFirestore, doc } from "firebase/firestore";
+import {
+  setDoc,
+  getFirestore,
+  doc,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Einheit } from "../types/Einheit.type";
 import { Zutat } from "../types/Zutat.type";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { DocumentData } from "firebase/firestore/lite";
+import { Tag } from "../types/Tag.type";
+import NeuerTag from "./NeuerTag.component";
+import NeueEinheit from "./NeueEinheit.component";
+import { ID } from "../types/ID.type";
 
 export default function NeueZutat() {
   const [open, setOpen] = useState<boolean>(false);
+
+  const [einheitenValue, einheitenLoading, einheitenError] = useCollection(
+    collection(getFirestore(app), "Einheiten"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  const [tagValue, tagLoading, tagError] = useCollection(
+    collection(getFirestore(app), "Tags"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   async function saveZutat(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -17,13 +44,15 @@ export default function NeueZutat() {
     const formData = new FormData(form);
 
     const uuid = uuidv4();
-    const name = formData.get("labelShort") as string;
-    const einheit = formData.get("labelLong") as string;
-    const vegetarisch = formData.get("labelLong") as string;
-    const vegan = formData.get("labelLong") as string;
+    const name = formData.get("name") as string;
+    const einheit = formData.get("einheit") as ID;
+    const tagIDs = formData.getAll("tag") as ID[];
 
-    await setDoc(doc(getFirestore(app), "Einheiten", labelLong), {
+    await setDoc(doc(getFirestore(app), "Zutaten", name), {
       id: uuid,
+      name,
+      defaultEinheit: einheit,
+      tags: tagIDs,
     } as Zutat).then(() => {
       form.reset();
       setOpen(false);
@@ -32,7 +61,7 @@ export default function NeueZutat() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>Neue Einheit</button>
+      <button onClick={() => setOpen(true)}>Neue Zutat</button>
 
       <dialog open={open}>
         <article>
@@ -43,33 +72,58 @@ export default function NeueZutat() {
               onClick={() => setOpen(false)}
             ></button>
             <p>
-              <strong>Neue Einheit hinzufügen</strong>
+              <strong>Neue Zutat hinzufügen</strong>
             </p>
           </header>
-          <form onSubmit={saveZutat}>
+          <form id="newZutatForm" onSubmit={saveZutat}>
             <fieldset>
               <label>
                 Name
-                <input
-                  type="text"
-                  name="labelLong"
-                  required
-                  placeholder="ausgeschrieben"
-                />
+                <input type="text" name="name" required placeholder="Name" />
               </label>
               <label>
-                Kurzschreibweise
-                <input
-                  type="text"
-                  name="labelShort"
-                  required
-                  placeholder="Abk."
-                />
+                Standardeinheit
+                <select name="einheit" defaultValue="select">
+                  <option value="select" disabled>
+                    - auswählen -
+                  </option>
+                  {einheitenValue?.docs.map((doc: DocumentData, i) => {
+                    const einheit: Einheit = doc.data();
+                    return (
+                      <option key={einheit.id} value={einheit.id}>
+                        {einheit.labelLong}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+              <label>
+                Tags
+                {tagValue?.docs.map((doc: DocumentData, i) => {
+                  const tag: Tag = doc.data();
+                  return (
+                    <label key={tag.id}>
+                      <input type="checkbox" name="tag" value={tag.id} />
+                      {tag.name}
+                    </label>
+                  );
+                })}
               </label>
             </fieldset>
-
-            <input type="submit" value="Einheit speichern" />
           </form>
+
+          <div className="flex gap-1">
+            <NeueEinheit />
+            <NeuerTag />
+          </div>
+
+          <footer>
+            <input
+              type="submit"
+              form="newZutatForm"
+              value="Einheit speichern"
+            />
+          </footer>
         </article>
       </dialog>
     </>
