@@ -1,7 +1,7 @@
 export type Zutat = {
   id: string;
   name: string;
-  menge: number;
+  menge?: number;
   einheit: string;
   vegetarisch: boolean;
   vegan: boolean;

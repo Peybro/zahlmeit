@@ -24,6 +24,11 @@ export default function Navigation() {
             Einheiten
           </Link>
         </li>
+        <li>
+          <Link href="/tags" className="nav-link">
+            Tags
+          </Link>
+        </li>
       </ul>
     </nav>
   );
