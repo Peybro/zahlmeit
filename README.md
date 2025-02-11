@@ -141,7 +141,7 @@ type BeispielChildProps = {
 };
 
 export default function BeispielChild({ nr }: BeispielChildProps) {
-  return <li>{props.nr}</li>;
+  return <li>{nr}</li>;
 }
 ```
 
