@@ -1,7 +1,7 @@
 "use client";
 
 import { app } from "@/firebase";
-import { setDoc, getFirestore, doc, collection } from "firebase/firestore";
+import { setDoc, doc, collection } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Einheit } from "../types/Einheit.type";
@@ -17,17 +17,17 @@ export default function NeueZutat() {
   const [open, setOpen] = useState<boolean>(false);
 
   const [einheitenValue, einheitenLoading, einheitenError] = useCollection(
-    collection(getFirestore(app), "Einheiten"),
+    collection(app, "Einheiten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   const [tagValue, tagLoading, tagError] = useCollection(
-    collection(getFirestore(app), "Tags"),
+    collection(app, "Tags"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   async function saveZutat(e: FormEvent<HTMLFormElement>) {
@@ -41,7 +41,7 @@ export default function NeueZutat() {
     const einheit = formData.get("einheit") as ID;
     const tagIDs = formData.getAll("tag") as ID[];
 
-    await setDoc(doc(getFirestore(app), "Zutaten", name), {
+    await setDoc(doc(app, "Zutaten", name), {
       id: uuid,
       name,
       defaultEinheit: einheit,

@@ -16,28 +16,28 @@ import { app } from "@/firebase";
 import { Einheit } from "@/app/lib/types/Einheit.type";
 import NeueEinheit from "../lib/components/NeueEinheit.component";
 import DeleteButton from "../lib/components/DeleteButton.component";
+import EditButton from "../lib/components/EditButton.component";
 
 export default function Einheiten() {
-  const [value, loading, error] = useCollection(
-    collection(getFirestore(app), "Einheiten"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    },
-  );
+  const [value, loading, error] = useCollection(collection(app, "Einheiten"), {
+    snapshotListenOptions: { includeMetadataChanges: true },
+  });
+
+  // TODO
+  async function editEinheit() {
+    return;
+  }
 
   async function deleteEinheit(id: string) {
     try {
-      const q = query(
-        collection(getFirestore(app), "Einheiten"),
-        where("id", "==", id),
-      );
+      const q = query(collection(app, "Einheiten"), where("id", "==", id));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
-          await deleteDoc(
-            doc(getFirestore(app), "Einheiten", document.id),
-          ).then(() => console.info(`Einheit mit ID ${document.id} gelöscht`));
+          await deleteDoc(doc(app, "Einheiten", document.id)).then(() =>
+            console.info(`Einheit mit ID ${document.id} gelöscht`),
+          );
         });
       } else {
         console.info("Kein passendes Dokument gefunden");
@@ -63,7 +63,10 @@ export default function Einheiten() {
             <summary>
               {data.labelLong} ({data.labelShort})
             </summary>
-            <DeleteButton onDelete={() => deleteEinheit(data.id)} />
+            <div className="flex gap-2">
+              <EditButton onClick={() => editEinheit()} />
+              <DeleteButton onDelete={() => deleteEinheit(data.id)} />
+            </div>
           </details>
         );
       })}

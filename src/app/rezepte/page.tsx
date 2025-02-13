@@ -1,19 +1,19 @@
 "use client";
 
-import { getFirestore, collection, DocumentData } from "firebase/firestore";
+import { collection, DocumentData } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
 import Link from "next/link";
 import { Rezept } from "@/app/lib/types/Rezept.type";
-import NeuesRezept from "../lib/components/NeuesRezept";
+import NeuesRezept from "../lib/components/NeuesRezept.component";
 import Bewertung from "../lib/components/Bewertung.component";
 
 export default function Rezepte() {
   const [rezepte, rezepteLoading, rezepteError] = useCollection(
-    collection(getFirestore(app), "Rezepte"),
+    collection(app, "Rezepte"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
 
   return (
@@ -28,16 +28,16 @@ export default function Rezepte() {
       )}
       <div className="grid">
         {rezepte?.docs.map((doc: DocumentData) => {
-          const data: Rezept = doc.data();
+          const rezept: Rezept = doc.data();
           return (
-            <article>
+            <article key={rezept.id}>
               <header>
-                <img src={data.bild} alt={`[Bild von ${data.name}]`} />
+                <img src={rezept.bild} alt={`[Bild von ${rezept.name}]`} />
               </header>
-              <h2>{data.name}</h2>
+              <h2>{rezept.name}</h2>
               <Bewertung
                 type="stars"
-                defaultValue={data.bewertung}
+                defaultValue={rezept.bewertung}
                 max={5}
                 editable={false}
               />

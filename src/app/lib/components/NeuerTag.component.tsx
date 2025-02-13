@@ -1,7 +1,7 @@
 "use client";
 
 import { app } from "@/firebase";
-import { setDoc, getFirestore, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Tag } from "../types/Tag.type";
@@ -19,7 +19,7 @@ export default function NeuerTag() {
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
 
-    await setDoc(doc(getFirestore(app), "Tags", name), {
+    await setDoc(doc(app, "Tags", name), {
       id: uuid,
       name,
       description,

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  getFirestore,
   collection,
   DocumentData,
   query,
@@ -14,41 +13,38 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
 import { Zutat } from "@/app/lib/types/Zutat.type";
 import NeueZutat from "../lib/components/NeueZutat.component";
-import Trash from "../lib/icons/Trash.icon";
 import DeleteButton from "../lib/components/DeleteButton.component";
 import { ID } from "../lib/types/ID.type";
-import { Einheit } from "../lib/types/Einheit.type";
-import { useEffect, useState } from "react";
-import { Tag } from "../lib/types/Tag.type";
+import EditButton from "../lib/components/EditButton.component";
 
 export default function Zutaten() {
   const [zutaten, zutatenLoading, zutatenError] = useCollection(
-    collection(getFirestore(app), "Zutaten"),
+    collection(app, "Zutaten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     },
   );
 
   const [einheiten, einheitenLoading, einheitenError] = useCollection(
-    collection(getFirestore(app), "Einheiten"),
+    collection(app, "Einheiten"),
   );
 
-  const [tags, tagsLoading, tagsError] = useCollection(
-    collection(getFirestore(app), "Tags"),
-  );
+  const [tags, tagsLoading, tagsError] = useCollection(collection(app, "Tags"));
+
+  // TODO
+  async function editZutat() {
+    return;
+  }
 
   async function deleteZutat(id: ID) {
     try {
-      const q = query(
-        collection(getFirestore(app), "Zutaten"),
-        where("id", "==", id),
-      );
+      const q = query(collection(app, "Zutaten"), where("id", "==", id));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
-          await deleteDoc(doc(getFirestore(app), "Zutaten", document.id)).then(
-            () => console.info(`Zutat mit ID ${document.id} gelöscht`),
+          await deleteDoc(doc(app, "Zutaten", document.id)).then(() =>
+            console.info(`Zutat mit ID ${document.id} gelöscht`),
           );
         });
       } else {
@@ -81,17 +77,17 @@ export default function Zutaten() {
         <h3>Es gibt hier noch keine Zutaten...</h3>
       )}
       {zutaten?.docs.map((doc: DocumentData) => {
-        const data: Zutat = doc.data();
+        const zutat: Zutat = doc.data();
         return (
-          <details key={data.id}>
-            <summary>{data.name}</summary>
+          <details key={zutat.id}>
+            <summary>{zutat.name}</summary>
             <article>
               <p>
                 Standardeinheit:{" "}
-                {getEinheitNameById(data.defaultEinheit as string)}
+                {getEinheitNameById(zutat.defaultEinheit as string)}
               </p>
               <div className="flex gap-2">
-                {data.tags.map((tag) => {
+                {zutat.tags?.map((tag) => {
                   return (
                     <div
                       key={tag}
@@ -102,8 +98,9 @@ export default function Zutaten() {
                   );
                 })}
               </div>
-              <footer>
-                <DeleteButton onDelete={() => deleteZutat(data.id)} />
+              <footer className="flex gap-2">
+                <EditButton onClick={() => editZutat()} />
+                <DeleteButton onDelete={() => deleteZutat(zutat.id)} />
               </footer>
             </article>
           </details>

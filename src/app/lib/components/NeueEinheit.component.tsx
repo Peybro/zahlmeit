@@ -1,7 +1,7 @@
 "use client";
 
 import { app } from "@/firebase";
-import { setDoc, getFirestore, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Einheit } from "../types/Einheit.type";
@@ -19,7 +19,7 @@ export default function NeueEinheit() {
     const labelShort = formData.get("labelShort") as string;
     const labelLong = formData.get("labelLong") as string;
 
-    await setDoc(doc(getFirestore(app), "Einheiten", labelLong), {
+    await setDoc(doc(app, "Einheiten", labelLong), {
       id: uuid,
       labelShort,
       labelLong,

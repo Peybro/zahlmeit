@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  getFirestore,
   collection,
   DocumentData,
   query,
@@ -15,27 +14,27 @@ import { app } from "@/firebase";
 import NeuerTag from "../lib/components/NeuerTag.component";
 import { Tag } from "../lib/types/Tag.type";
 import DeleteButton from "../lib/components/DeleteButton.component";
+import EditButton from "../lib/components/EditButton.component";
 
 export default function Einheiten() {
-  const [value, loading, error] = useCollection(
-    collection(getFirestore(app), "Tags"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    },
-  );
+  const [value, loading, error] = useCollection(collection(app, "Tags"), {
+    snapshotListenOptions: { includeMetadataChanges: true },
+  });
+
+  // TODO
+  async function editTag() {
+    return;
+  }
 
   async function deleteTag(id: string) {
     try {
-      const q = query(
-        collection(getFirestore(app), "Tags"),
-        where("id", "==", id),
-      );
+      const q = query(collection(app, "Tags"), where("id", "==", id));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach(async (document) => {
-          await deleteDoc(doc(getFirestore(app), "Tags", document.id)).then(
-            () => console.info(`Tag mit ID ${document.id} gelöscht`),
+          await deleteDoc(doc(app, "Tags", document.id)).then(() =>
+            console.info(`Tag mit ID ${document.id} gelöscht`),
           );
         });
       } else {
@@ -60,7 +59,8 @@ export default function Einheiten() {
             <summary>{data.name}</summary>
             <article>
               <p>{data.description}</p>
-              <footer>
+              <footer className="flex gap-2">
+                <EditButton onClick={() => editTag()} />
                 <DeleteButton onDelete={() => deleteTag(data.id)} />
               </footer>
             </article>

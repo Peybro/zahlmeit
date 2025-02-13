@@ -1,30 +1,42 @@
 "use client";
 
-import { useDocument } from "react-firebase-hooks/firestore";
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
-import { doc, getFirestore } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import { Zutat } from "@/app/lib/types/Zutat.type";
-import UpdateRezept from "@/app/lib/components/UpdateRezept.component";
+import EditRezept from "@/app/lib/components/EditRezept.component";
 import Link from "next/link";
 import Arrow from "@/app/lib/icons/Arrow.icon";
+import { ID } from "@/app/lib/types/ID.type";
 
 export default function SpecificRezept() {
-  const id = window.location.pathname.split("/").at(-1);
+  const rezeptName = window.location.pathname.split("/").at(-1);
 
   const [rezepte, rezepteLoading, rezepteError] = useDocument(
-    doc(getFirestore(app), "Rezepte", id as string),
+    doc(app, "Rezepte", rezeptName as string),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    }
+    },
   );
+
+  const [tags, tagsLoading, tagsError] = useCollection(collection(app, "Tags"));
+
+  function getTagNameById(id: ID): string {
+    if (!tags) return "Lade Tags...";
+    const tag = tags.docs.find((doc) => doc.data().id === id);
+    return tag ? tag.data().name : "Unbekannter Tag";
+  }
 
   return (
     <>
-      <Link href="/rezepte">
-        <div className="flex gap-1">
-          <Arrow direction="left" /> zurück zu Rezepten
-        </div>
-      </Link>
+      <div className="flex justify-between">
+        <Link href="/rezepte">
+          <div className="flex gap-1">
+            <Arrow direction="left" /> zurück zu Rezepten
+          </div>
+        </Link>
+        <EditRezept />
+      </div>
 
       <div className="m-4">
         {rezepteLoading && <p>Lade Rezept...</p>}
@@ -32,7 +44,19 @@ export default function SpecificRezept() {
         {rezepte && (
           <>
             <h2>{rezepte.data()?.name}</h2>
-            <UpdateRezept />
+            <div className="flex gap-2">
+              {rezepte.data()?.tags?.map((tag: ID) => {
+                return (
+                  <div
+                    key={tag}
+                    className="bg-primary text-black rounded-full px-3 py-1"
+                  >
+                    {getTagNameById(tag)}
+                  </div>
+                );
+              })}
+            </div>
+
             <div className="flex gap-2">
               <img
                 src={rezepte.data()?.bild}

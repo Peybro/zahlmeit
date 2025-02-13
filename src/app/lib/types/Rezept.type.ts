@@ -8,4 +8,5 @@ export type Rezept = {
   anleitung: string[];
   bild?: string;
   bewertung: number;
+  tags?: ID[];
 };
