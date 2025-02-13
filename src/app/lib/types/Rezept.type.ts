@@ -6,8 +6,6 @@ export type Rezept = {
   name: string;
   zutaten: Zutat[];
   anleitung: string[];
-  bild: string;
+  bild?: string;
   bewertung: number;
-  vegetarisch: boolean;
-  vegan: boolean;
 };

@@ -1,14 +1,7 @@
 "use client";
 
 import { app } from "@/firebase";
-import {
-  setDoc,
-  getFirestore,
-  doc,
-  collection,
-  query,
-  where,
-} from "firebase/firestore";
+import { setDoc, getFirestore, doc, collection } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Einheit } from "../types/Einheit.type";
@@ -27,14 +20,14 @@ export default function NeueZutat() {
     collection(getFirestore(app), "Einheiten"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    },
+    }
   );
 
   const [tagValue, tagLoading, tagError] = useCollection(
     collection(getFirestore(app), "Tags"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    },
+    }
   );
 
   async function saveZutat(e: FormEvent<HTMLFormElement>) {

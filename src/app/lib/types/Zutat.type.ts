@@ -5,5 +5,6 @@ export type Zutat = {
   name: string;
   menge?: number;
   defaultEinheit?: ID;
-  tags: ID[];
+  einheit: ID;
+  tags?: ID[];
 };
