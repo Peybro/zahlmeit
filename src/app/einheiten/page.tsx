@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  getFirestore,
   collection,
   DocumentData,
   deleteDoc,
   doc,
-  getDoc,
   query,
   where,
   getDocs,

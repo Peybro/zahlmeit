@@ -32,7 +32,7 @@ export default function Bewertung({
         <div className="flex justify-between w-full">
           {Array(max)
             .fill(0)
-            .map((elem, i) => {
+            .map((_elem, i) => {
               return (
                 <span key={i} className="">
                   {i + 1}
@@ -59,7 +59,7 @@ export default function Bewertung({
       <div className="flex">
         {Array(max)
           .fill(0)
-          .map((elem, i) => {
+          .map((_elem, i) => {
             return (
               <div
                 key={i}
