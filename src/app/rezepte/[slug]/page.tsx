@@ -1,13 +1,12 @@
 "use client";
 
-import { useCollection, useDocument } from "react-firebase-hooks/firestore";
+import { useDocument } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
-import { Zutat } from "@/app/lib/types/Zutat.type";
+import { doc } from "firebase/firestore";
 import EditRezept from "@/app/lib/components/EditRezept.component";
 import Link from "next/link";
 import Arrow from "@/app/lib/icons/Arrow.icon";
-import { ID } from "@/app/lib/types/ID.type";
+import { ID, Zutat } from "@/app/lib/types";
 
 export default function SpecificRezept() {
   const rezeptName = window.location.pathname.split("/").at(-1);
@@ -18,14 +17,6 @@ export default function SpecificRezept() {
       snapshotListenOptions: { includeMetadataChanges: true },
     },
   );
-
-  const [tags, tagsLoading, tagsError] = useCollection(collection(app, "Tags"));
-
-  function getTagNameById(id: ID): string {
-    if (!tags) return "Lade Tags...";
-    const tag = tags.docs.find((doc) => doc.data().id === id);
-    return tag ? tag.data().name : "Unbekannter Tag";
-  }
 
   return (
     <>
@@ -51,7 +42,7 @@ export default function SpecificRezept() {
                     key={tag}
                     className="bg-primary text-black rounded-full px-3 py-1"
                   >
-                    {getTagNameById(tag)}
+                    {tag}
                   </div>
                 );
               })}
@@ -66,10 +57,10 @@ export default function SpecificRezept() {
                 {/* Variablen können auch ohne Aneinanderkettung von Plussen (+'s) in Strings eingesetzt werden: */}
                 <h3>Zutaten:</h3>
                 {rezepte.data()?.zutaten.map((zutat: Zutat, index: number) => (
-                  <div key={zutat.id} className="flex">
+                  <div key={zutat.name + "_" + index} className="flex">
                     <input type="checkbox" />
                     <p key={index}>
-                      {zutat.name} - {zutat.menge} {zutat.defaultEinheit}
+                      {zutat.name} - {zutat.menge} {zutat.einheit}
                     </p>
                   </div>
                 ))}

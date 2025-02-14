@@ -16,7 +16,7 @@ export default function Navigation() {
         </li>
       </ul>
       <ul>
-        {["Rezepte", "Zutaten", "Einheiten", "Tags"].map((route) => {
+        {["Rezepte", "Wochenplaner"].map((route) => {
           return (
             <li key={route}>
               <Link

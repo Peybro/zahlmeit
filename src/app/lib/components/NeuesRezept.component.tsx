@@ -1,64 +1,45 @@
 "use state";
 
-import { collection, doc, setDoc } from "firebase/firestore";
-import { FormEvent, useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { app } from "@/firebase";
-import { Rezept } from "../types/Rezept.type";
 import Bewertung from "./Bewertung.component";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { Einheit } from "../types/Einheit.type";
-import { Zutat } from "../types/Zutat.type";
-import NeueZutat from "./NeueZutat.component";
 import DeleteButton from "./DeleteButton.component";
-import { Tag } from "../types/Tag.type";
-import NeuerTag from "./NeuerTag.component";
-import { ID } from "../types/ID.type";
+import Tag from "./Tag.component";
+import { Zutat as ZutatType, ID, Rezept } from "../types";
+import Zutat from "./Zutat.component";
 
 export default function NeuesRezept() {
   const [open, setOpen] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
-  const [selectedZutat, setSelectedZutat] = useState<Zutat>();
-  const [selectedEinheit, setSelectedEinheit] = useState<Einheit>();
-  const [newMenge, setNewMenge] = useState<number>();
-  const [zutatenList, setZutatenList] = useState<
-    {
-      zutat: Zutat;
-      menge: number;
-      einheit: Einheit;
-    }[]
-  >([]);
 
-  const [zutaten, zutatenLoading, zutatenError] = useCollection(
-    collection(app, "Zutaten"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    },
-  );
-  const [einheiten, einheitenLoading, einheitenError] = useCollection(
-    collection(app, "Einheiten"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    },
-  );
+  const [zutatenListe, setZutatenListe] = useState<ZutatType[]>([]);
+  const [newZutatName, setNewZutatName] = useState<string>("");
+  const [newZutatMenge, setNewZutatMenge] = useState<string>("");
+  const [newZutatEinheit, setNewZutatEinheit] = useState<string>("");
 
-  const [tagValue, tagLoading, tagError] = useCollection(
-    collection(app, "Tags"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    },
-  );
+  function addNewZutat() {
+    setZutatenListe((prev) => [
+      ...prev,
+      {
+        name: newZutatName,
+        menge: parseInt(newZutatMenge),
+        einheit: newZutatEinheit,
+      },
+    ]);
+    setNewZutatName("");
+    setNewZutatMenge("");
+    setNewZutatEinheit("");
+  }
 
-  useEffect(() => {
-    setSelectedEinheit(
-      einheiten?.docs
-        .find((e) => {
-          const einheit = e.data() as Einheit;
-          return einheit.id === selectedZutat!.defaultEinheit;
-        })
-        ?.data() as Einheit,
-    );
-  }, [selectedZutat]);
+  const [tagsListe, setTagsListe] = useState<string[]>([]);
+  const [newTagName, setNewTagName] = useState<string>("");
+
+  function addNewTag() {
+    setTagsListe((prev) => [...prev, newTagName]);
+    setNewTagName("");
+  }
 
   async function saveRezept(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -71,20 +52,15 @@ export default function NeuesRezept() {
     const anleitung = formData.get("anleitung") as string;
     // const bild;
     const bewertung = formData.get("bewertung") as string;
-    const tags = formData.getAll("tag") as ID[];
 
     await setDoc(doc(app, "Rezepte", name), {
       id: uuid,
       name,
-      zutaten: zutatenList.map((zutat) => ({
-        id: zutat.zutat.id,
-        name: zutat.zutat.name,
-        menge: zutat.menge,
-        einheit: zutat.einheit.id,
-      })),
+      zutaten: zutatenListe,
       anleitung: anleitung.split("\n"),
+      bild: "",
       bewertung: parseInt(bewertung),
-      tags,
+      tags: tagsListe,
     } as Rezept).then(() => {
       form.reset();
       setOpen(false);
@@ -109,15 +85,17 @@ export default function NeuesRezept() {
           </header>
           <form id="newRezeptForm" onSubmit={saveRezept}>
             <fieldset>
-              <label>
-                Bewertung
-                <Bewertung type="stars" name="bewertung" max={5} />
-              </label>
+              <div className="flex justify-between gap-2">
+                <label>
+                  Bild
+                  <input type="file" name="bild" placeholder="Bild" />
+                </label>
 
-              <label>
-                Bild
-                <input type="file" name="bild" placeholder="Bild" />
-              </label>
+                <label>
+                  {/* Bewertung */}
+                  <Bewertung type="stars" name="bewertung" max={5} />
+                </label>
+              </div>
 
               <label>
                 Name
@@ -134,135 +112,52 @@ export default function NeuesRezept() {
               <label>Zutaten</label>
 
               <ul>
-                {zutatenList.map((zutat) => {
+                {zutatenListe.map((zutat, i) => {
                   return (
-                    <li key={zutat.zutat.id}>
-                      <DeleteButton
-                        onDelete={() =>
-                          setZutatenList((prev) =>
-                            prev.filter((z) => z.zutat.id !== zutat.zutat.id),
-                          )
-                        }
-                      />
-                      {zutat.zutat.name}: {zutat.menge}{" "}
-                      {zutat.einheit.labelLong}
-                    </li>
+                    <Zutat
+                      zutat={zutat}
+                      onDelete={() =>
+                        setZutatenListe((prev) =>
+                          prev.filter((_z, j) => i !== j),
+                        )
+                      }
+                    />
                   );
                 })}
               </ul>
-
-              {/* evtl durch "downshift" ersetzen */}
-              {/* <input
-                list="zutatenListe"
-                type="text"
-                onChange={(e) => setSelectedZutat(e.currentTarget.value)}
-              />
-              <datalist id="zutatenListe">
-                {zutaten?.docs.map((doc, i) => {
-                  const zutat = doc.data() as Zutat;
-                  return (
-                    <option key={zutat.id} value={JSON.stringify(zutat)}>
-                      {zutat.name}
-                    </option>
-                  );
-                })}
-              </datalist> */}
-
               <fieldset role="group">
-                <select
-                  defaultValue="defaultSelectZutat"
-                  onChange={(e) =>
-                    setSelectedZutat(JSON.parse(e.currentTarget.value) as Zutat)
-                  }
-                >
-                  <option value="defaultSelectZutat" disabled>
-                    - Zutat -
-                  </option>
-                  {zutaten?.docs.map((doc, i) => {
-                    const zutat = doc.data() as Zutat;
-                    return (
-                      <option key={zutat.id} value={JSON.stringify(zutat)}>
-                        {zutat.name}
-                      </option>
-                    );
-                  })}
-                </select>
-
+                <input
+                  type="text"
+                  value={newZutatName}
+                  onChange={(e) => setNewZutatName(e.currentTarget.value)}
+                  placeholder="Neue Zutat"
+                />
                 <input
                   type="number"
+                  value={newZutatMenge}
+                  onChange={(e) => setNewZutatMenge(e.currentTarget.value)}
                   placeholder="Menge"
-                  value={newMenge}
-                  onChange={(e) => setNewMenge(parseInt(e.currentTarget.value))}
                 />
-
-                <select
-                  defaultValue="defaultSelectEinheit"
-                  value={JSON.stringify(selectedEinheit)}
-                  onChange={(e) =>
-                    setSelectedEinheit(
-                      JSON.parse(e.currentTarget.value) as Einheit,
-                    )
-                  }
-                >
-                  <option value="defaultSelectEinheit" disabled>
-                    - Einheit -
-                  </option>
-                  {einheiten?.docs.map((doc, i) => {
-                    const einheit = doc.data() as Einheit;
-                    return (
-                      <option key={einheit.id} value={JSON.stringify(einheit)}>
-                        {einheit.labelShort}
-                      </option>
-                    );
-                  })}
-                </select>
+                <input
+                  type="text"
+                  value={newZutatEinheit}
+                  onChange={(e) => setNewZutatEinheit(e.currentTarget.value)}
+                  placeholder="Einheit"
+                />
                 <button
-                  className="outline secondary"
-                  onClick={() =>
-                    setZutatenList((prev) => [
-                      ...prev,
-                      {
-                        zutat: selectedZutat!,
-                        menge: newMenge!,
-                        einheit: selectedEinheit!,
-                      },
-                    ])
-                  }
+                  className="outline"
+                  onClick={addNewZutat}
                   disabled={
-                    selectedZutat === undefined ||
-                    newMenge === undefined ||
-                    selectedEinheit === undefined ||
-                    zutatenList.find(
-                      (z) => z.zutat.id === selectedZutat?.id,
-                    ) !== undefined
+                    newZutatName === "" ||
+                    newZutatMenge === "" ||
+                    newZutatEinheit === ""
                   }
                 >
-                  {zutatenList.find((z) => z.zutat.id === selectedZutat?.id) ===
-                  undefined
-                    ? "Hinzufügen"
-                    : "vorhanden"}
+                  Add
                 </button>
               </fieldset>
-
-              <label>Tags</label>
-              <div className="grid">
-                {tagValue?.docs.map((doc, i) => {
-                  const tag = doc.data() as Tag;
-                  return (
-                    <div key={tag.id}>
-                      <input type="checkbox" name="tag" value={tag.id} />
-                      <label>{tag.name}</label>
-                    </div>
-                  );
-                })}
-              </div>
             </fieldset>
           </form>
-
-          <div className="flex gap-1">
-            <NeueZutat />
-            <NeuerTag />
-          </div>
 
           <label className="mt-4">
             Anleitung
@@ -273,6 +168,36 @@ export default function NeuesRezept() {
               placeholder="Jeder Zeilenumbruch entspricht einem Schritt"
             />
           </label>
+
+          <label>Tags</label>
+
+          <div className="grid mb-2">
+            {tagsListe.map((tag, i) => {
+              return (
+                <Tag
+                  tag={tag}
+                  onDeleteTag={() =>
+                    setTagsListe((prev) => prev.filter((_t, j) => i !== j))
+                  }
+                />
+              );
+            })}
+          </div>
+          <fieldset role="group">
+            <input
+              type="text"
+              value={newTagName}
+              onChange={(e) => setNewTagName(e.currentTarget.value)}
+              placeholder="Neuer Tag"
+            />
+            <button
+              className="outline"
+              onClick={addNewTag}
+              disabled={newTagName === ""}
+            >
+              Add
+            </button>
+          </fieldset>
 
           <footer>
             <input
