@@ -4,16 +4,16 @@ import { collection, DocumentData } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { app } from "@/firebase";
 import Link from "next/link";
-import { Rezept } from "@/app/lib/types/Rezept.type";
 import NeuesRezept from "../lib/components/NeuesRezept.component";
 import Bewertung from "../lib/components/Bewertung.component";
+import { Rezept } from "../lib/types";
 
 export default function Rezepte() {
   const [rezepte, rezepteLoading, rezepteError] = useCollection(
     collection(app, "Rezepte"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    },
+    }
   );
 
   return (
@@ -32,7 +32,10 @@ export default function Rezepte() {
           return (
             <article key={rezept.id}>
               <header>
-                <img src={rezept.bild} alt={`[Bild von ${rezept.name}]`} />
+                <img
+                  src={rezept.bild === "" ? undefined : rezept.bild}
+                  alt={`[Bild von ${rezept.name}]`}
+                />
               </header>
               <h2>{rezept.name}</h2>
               <Bewertung

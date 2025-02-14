@@ -15,7 +15,7 @@ export default function SpecificRezept() {
     doc(app, "Rezepte", rezeptName as string),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
-    },
+    }
   );
 
   return (
@@ -50,7 +50,9 @@ export default function SpecificRezept() {
 
             <div className="flex gap-2">
               <img
-                src={rezepte.data()?.bild}
+                src={
+                  rezepte.data()?.bild === "" ? undefined : rezepte.data()?.bild
+                }
                 alt={`[Bild von ${rezepte.data()?.name}]`}
               />
               <div className="block">
